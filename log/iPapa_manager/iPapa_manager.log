@@ -1,0 +1,136 @@
+2014-02-05 20:19:43,771 [INFO][iManager.py:80]: initTasksInQueue Done. self.initTasks:[[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]] qsize[10]
+2014-02-05 20:19:45,773 [DEBUG][iManager.py:130]: outQueue Empty, will check whether all tasks are Done
+2014-02-05 20:19:45,774 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:19:46,802 [INFO][iManager.py:100]: get output[thread [0], get [0] from queue, Done]
+2014-02-05 20:19:46,802 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:19:46,802 [INFO][iManager.py:100]: get output[thread [1], get [1] from queue, Done]
+2014-02-05 20:19:46,802 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:19:48,803 [DEBUG][iManager.py:130]: outQueue Empty, will check whether all tasks are Done
+2014-02-05 20:19:48,803 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:19:49,784 [INFO][iManager.py:100]: get output[thread [0], get [2] from queue, Done]
+2014-02-05 20:19:49,784 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:19:49,785 [INFO][iManager.py:100]: get output[thread [1], get [3] from queue, Done]
+2014-02-05 20:19:49,785 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:19:51,786 [DEBUG][iManager.py:130]: outQueue Empty, will check whether all tasks are Done
+2014-02-05 20:19:51,786 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:19:52,812 [INFO][iManager.py:100]: get output[thread [0], get [4] from queue, Done]
+2014-02-05 20:19:52,812 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:19:52,812 [INFO][iManager.py:100]: get output[thread [1], get [5] from queue, Done]
+2014-02-05 20:19:52,813 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:19:54,813 [DEBUG][iManager.py:130]: outQueue Empty, will check whether all tasks are Done
+2014-02-05 20:19:54,814 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:19:55,793 [INFO][iManager.py:100]: get output[thread [0], get [6] from queue, Done]
+2014-02-05 20:19:55,793 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:19:55,794 [INFO][iManager.py:100]: get output[thread [1], get [7] from queue, Done]
+2014-02-05 20:19:55,794 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:19:57,794 [DEBUG][iManager.py:130]: outQueue Empty, will check whether all tasks are Done
+2014-02-05 20:19:57,794 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:19:58,822 [INFO][iManager.py:100]: get output[thread [0], get [8] from queue, Done]
+2014-02-05 20:19:58,822 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:19:58,822 [INFO][iManager.py:100]: get output[thread [1], get [9] from queue, Done]
+2014-02-05 20:19:58,823 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:20:00,823 [DEBUG][iManager.py:130]: outQueue Empty, will check whether all tasks are Done
+2014-02-05 20:20:00,824 [INFO][iManager.py:107]: flushOutQueue Done, outQueue empty guaranteed.
+2014-02-05 20:20:00,824 [INFO][iManager.py:140]: All tasks completed, exit.
+2014-02-05 20:51:37,395 [INFO][iManager.py:80]: initTasksInQueue Done. self.initTasks:[[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]] qsize[10]
+2014-02-05 20:51:39,398 [DEBUG][iManager.py:130]: outQueue Empty, will check whether all tasks are Done
+2014-02-05 20:51:39,398 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:51:40,425 [INFO][iManager.py:100]: get output[thread [0], get [0] from queue, Done]
+2014-02-05 20:51:40,426 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:51:40,426 [INFO][iManager.py:100]: get output[thread [1], get [1] from queue, Done]
+2014-02-05 20:51:40,426 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:51:42,427 [DEBUG][iManager.py:130]: outQueue Empty, will check whether all tasks are Done
+2014-02-05 20:51:42,427 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:51:43,405 [INFO][iManager.py:100]: get output[thread [0], get [2] from queue, Done]
+2014-02-05 20:51:43,405 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:51:43,405 [INFO][iManager.py:100]: get output[thread [1], get [3] from queue, Done]
+2014-02-05 20:51:43,405 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:51:45,406 [DEBUG][iManager.py:130]: outQueue Empty, will check whether all tasks are Done
+2014-02-05 20:51:45,406 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:51:46,434 [INFO][iManager.py:100]: get output[thread [0], get [4] from queue, Done]
+2014-02-05 20:51:46,434 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:51:46,434 [INFO][iManager.py:100]: get output[thread [1], get [5] from queue, Done]
+2014-02-05 20:51:46,434 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:51:48,435 [DEBUG][iManager.py:130]: outQueue Empty, will check whether all tasks are Done
+2014-02-05 20:51:48,435 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:51:49,414 [INFO][iManager.py:100]: get output[thread [0], get [6] from queue, Done]
+2014-02-05 20:51:49,414 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:51:49,414 [INFO][iManager.py:100]: get output[thread [1], get [7] from queue, Done]
+2014-02-05 20:51:49,414 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:51:51,415 [DEBUG][iManager.py:130]: outQueue Empty, will check whether all tasks are Done
+2014-02-05 20:51:51,415 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:51:52,446 [INFO][iManager.py:100]: get output[thread [0], get [8] from queue, Done]
+2014-02-05 20:51:52,446 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:51:52,446 [INFO][iManager.py:100]: get output[thread [1], get [9] from queue, Done]
+2014-02-05 20:51:52,446 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:51:54,447 [DEBUG][iManager.py:130]: outQueue Empty, will check whether all tasks are Done
+2014-02-05 20:51:54,448 [INFO][iManager.py:107]: flushOutQueue Done, outQueue empty guaranteed.
+2014-02-05 20:51:54,448 [INFO][iManager.py:140]: All tasks completed, exit.
+2014-02-05 20:53:39,617 [INFO][iManager.py:80]: initTasksInQueue Done. self.initTasks:[[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]] qsize[10]
+2014-02-05 20:53:41,619 [DEBUG][iManager.py:130]: outQueue Empty, will check whether all tasks are Done
+2014-02-05 20:53:41,619 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:53:42,653 [INFO][iManager.py:100]: get output[thread [0], get [0] from queue, Done]
+2014-02-05 20:53:42,654 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:53:42,654 [INFO][iManager.py:100]: get output[thread [1], get [1] from queue, Done]
+2014-02-05 20:53:42,654 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:53:44,655 [DEBUG][iManager.py:130]: outQueue Empty, will check whether all tasks are Done
+2014-02-05 20:53:44,656 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:53:45,641 [INFO][iManager.py:100]: get output[thread [0], get [2] from queue, Done]
+2014-02-05 20:53:45,641 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:53:45,642 [INFO][iManager.py:100]: get output[thread [1], get [3] from queue, Done]
+2014-02-05 20:53:45,642 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:53:47,642 [DEBUG][iManager.py:130]: outQueue Empty, will check whether all tasks are Done
+2014-02-05 20:53:47,643 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:53:48,674 [INFO][iManager.py:100]: get output[thread [0], get [4] from queue, Done]
+2014-02-05 20:53:48,675 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:53:48,675 [INFO][iManager.py:100]: get output[thread [1], get [5] from queue, Done]
+2014-02-05 20:53:48,675 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:53:50,676 [DEBUG][iManager.py:130]: outQueue Empty, will check whether all tasks are Done
+2014-02-05 20:53:50,677 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:53:51,652 [INFO][iManager.py:100]: get output[thread [0], get [6] from queue, Done]
+2014-02-05 20:53:51,652 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:53:51,652 [INFO][iManager.py:100]: get output[thread [1], get [7] from queue, Done]
+2014-02-05 20:53:51,653 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:53:53,654 [DEBUG][iManager.py:130]: outQueue Empty, will check whether all tasks are Done
+2014-02-05 20:53:53,654 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:53:54,678 [INFO][iManager.py:100]: get output[thread [0], get [8] from queue, Done]
+2014-02-05 20:53:54,678 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:53:54,679 [INFO][iManager.py:100]: get output[thread [1], get [9] from queue, Done]
+2014-02-05 20:53:54,679 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:53:56,680 [DEBUG][iManager.py:130]: outQueue Empty, will check whether all tasks are Done
+2014-02-05 20:53:56,681 [INFO][iManager.py:107]: flushOutQueue Done, outQueue empty guaranteed.
+2014-02-05 20:53:56,681 [INFO][iManager.py:140]: All tasks completed, exit.
+2014-02-05 20:54:12,357 [INFO][iManager.py:80]: initTasksInQueue Done. self.initTasks:[[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]] qsize[10]
+2014-02-05 20:54:14,359 [DEBUG][iManager.py:130]: outQueue Empty, will check whether all tasks are Done
+2014-02-05 20:54:14,360 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:54:15,394 [INFO][iManager.py:100]: get output[thread [0], get [0] from queue, Done]
+2014-02-05 20:54:15,394 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:54:15,394 [INFO][iManager.py:100]: get output[thread [1], get [1] from queue, Done]
+2014-02-05 20:54:15,394 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:54:17,395 [DEBUG][iManager.py:130]: outQueue Empty, will check whether all tasks are Done
+2014-02-05 20:54:17,395 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:54:18,373 [INFO][iManager.py:100]: get output[thread [0], get [2] from queue, Done]
+2014-02-05 20:54:18,373 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:54:18,374 [INFO][iManager.py:100]: get output[thread [1], get [3] from queue, Done]
+2014-02-05 20:54:18,374 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:54:20,375 [DEBUG][iManager.py:130]: outQueue Empty, will check whether all tasks are Done
+2014-02-05 20:54:20,376 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:54:21,411 [INFO][iManager.py:100]: get output[thread [0], get [4] from queue, Done]
+2014-02-05 20:54:21,412 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:54:21,412 [INFO][iManager.py:100]: get output[thread [1], get [5] from queue, Done]
+2014-02-05 20:54:21,412 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:54:23,413 [DEBUG][iManager.py:130]: outQueue Empty, will check whether all tasks are Done
+2014-02-05 20:54:23,413 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:54:24,395 [INFO][iManager.py:100]: get output[thread [0], get [6] from queue, Done]
+2014-02-05 20:54:24,395 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:54:24,395 [INFO][iManager.py:100]: get output[thread [1], get [7] from queue, Done]
+2014-02-05 20:54:24,396 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:54:26,396 [DEBUG][iManager.py:130]: outQueue Empty, will check whether all tasks are Done
+2014-02-05 20:54:26,396 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:54:27,381 [INFO][iManager.py:100]: get output[thread [1], get [9] from queue, Done]
+2014-02-05 20:54:27,381 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:54:27,382 [INFO][iManager.py:100]: get output[thread [0], get [8] from queue, Done]
+2014-02-05 20:54:27,382 [DEBUG][iManager.py:134]: Manger: I get nothing from outQueue, but some worker thread are busy
+2014-02-05 20:54:29,383 [DEBUG][iManager.py:130]: outQueue Empty, will check whether all tasks are Done
+2014-02-05 20:54:29,383 [INFO][iManager.py:107]: flushOutQueue Done, outQueue empty guaranteed.
+2014-02-05 20:54:29,384 [INFO][iManager.py:140]: All tasks completed, exit.

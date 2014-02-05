@@ -1,0 +1,72 @@
+2014-02-05 20:19:43,770 [DEBUG][iWorker.py:28]: my manager's inQueue size [0]
+2014-02-05 20:19:43,771 [DEBUG][iWorker.py:28]: my manager's inQueue size [0]
+2014-02-05 20:19:43,771 [INFO][iWorker.py:34]: worker 0 begin to run
+2014-02-05 20:19:43,772 [INFO][iWorker.py:34]: worker 1 begin to run
+2014-02-05 20:19:43,773 [INFO][iWorker.py:35]: my manager's inQueue size [10]
+2014-02-05 20:19:43,773 [INFO][iWorker.py:35]: my manager's inQueue size [10]
+2014-02-05 20:19:43,773 [INFO][iWorker.py:50]: thread [0], get [0] from queue
+2014-02-05 20:19:43,774 [INFO][iWorker.py:50]: thread [1], get [1] from queue
+2014-02-05 20:19:46,774 [INFO][iWorker.py:50]: thread [0], get [2] from queue
+2014-02-05 20:19:46,775 [INFO][iWorker.py:50]: thread [1], get [3] from queue
+2014-02-05 20:19:49,776 [INFO][iWorker.py:50]: thread [0], get [4] from queue
+2014-02-05 20:19:49,776 [INFO][iWorker.py:50]: thread [1], get [5] from queue
+2014-02-05 20:19:52,777 [INFO][iWorker.py:50]: thread [0], get [6] from queue
+2014-02-05 20:19:52,777 [INFO][iWorker.py:50]: thread [1], get [7] from queue
+2014-02-05 20:19:55,778 [INFO][iWorker.py:50]: thread [0], get [8] from queue
+2014-02-05 20:19:55,779 [INFO][iWorker.py:50]: thread [1], get [9] from queue
+2014-02-05 20:19:59,780 [DEBUG][iWorker.py:46]: thread [0] is hungerly now
+2014-02-05 20:19:59,781 [DEBUG][iWorker.py:46]: thread [1] is hungerly now
+2014-02-05 20:51:37,393 [DEBUG][iWorker.py:28]: my manager's inQueue size [0]
+2014-02-05 20:51:37,394 [DEBUG][iWorker.py:28]: my manager's inQueue size [0]
+2014-02-05 20:51:37,396 [INFO][iWorker.py:34]: worker 0 begin to run
+2014-02-05 20:51:37,396 [INFO][iWorker.py:35]: my manager's inQueue size [10]
+2014-02-05 20:51:37,396 [INFO][iWorker.py:34]: worker 1 begin to run
+2014-02-05 20:51:37,397 [INFO][iWorker.py:50]: thread [0], get [0] from queue
+2014-02-05 20:51:37,397 [INFO][iWorker.py:35]: my manager's inQueue size [9]
+2014-02-05 20:51:37,397 [INFO][iWorker.py:50]: thread [1], get [1] from queue
+2014-02-05 20:51:40,397 [INFO][iWorker.py:50]: thread [0], get [2] from queue
+2014-02-05 20:51:40,398 [INFO][iWorker.py:50]: thread [1], get [3] from queue
+2014-02-05 20:51:43,398 [INFO][iWorker.py:50]: thread [0], get [4] from queue
+2014-02-05 20:51:43,399 [INFO][iWorker.py:50]: thread [1], get [5] from queue
+2014-02-05 20:51:46,399 [INFO][iWorker.py:50]: thread [0], get [6] from queue
+2014-02-05 20:51:46,400 [INFO][iWorker.py:50]: thread [1], get [7] from queue
+2014-02-05 20:51:49,399 [INFO][iWorker.py:50]: thread [0], get [8] from queue
+2014-02-05 20:51:49,401 [INFO][iWorker.py:50]: thread [1], get [9] from queue
+2014-02-05 20:51:53,400 [DEBUG][iWorker.py:46]: thread [0] is hungerly now
+2014-02-05 20:51:53,402 [DEBUG][iWorker.py:46]: thread [1] is hungerly now
+2014-02-05 20:53:39,616 [DEBUG][iWorker.py:28]: my manager's inQueue size [0]
+2014-02-05 20:53:39,617 [DEBUG][iWorker.py:28]: my manager's inQueue size [0]
+2014-02-05 20:53:39,617 [INFO][iWorker.py:34]: worker 0 begin to run
+2014-02-05 20:53:39,618 [INFO][iWorker.py:35]: my manager's inQueue size [10]
+2014-02-05 20:53:39,618 [INFO][iWorker.py:34]: worker 1 begin to run
+2014-02-05 20:53:39,618 [INFO][iWorker.py:50]: thread [0], get [0] from queue
+2014-02-05 20:53:39,619 [INFO][iWorker.py:35]: my manager's inQueue size [9]
+2014-02-05 20:53:39,619 [INFO][iWorker.py:50]: thread [1], get [1] from queue
+2014-02-05 20:53:42,620 [INFO][iWorker.py:50]: thread [0], get [2] from queue
+2014-02-05 20:53:42,620 [INFO][iWorker.py:50]: thread [1], get [3] from queue
+2014-02-05 20:53:45,622 [INFO][iWorker.py:50]: thread [0], get [4] from queue
+2014-02-05 20:53:45,622 [INFO][iWorker.py:50]: thread [1], get [5] from queue
+2014-02-05 20:53:48,624 [INFO][iWorker.py:50]: thread [0], get [6] from queue
+2014-02-05 20:53:48,624 [INFO][iWorker.py:50]: thread [1], get [7] from queue
+2014-02-05 20:53:51,625 [INFO][iWorker.py:50]: thread [0], get [8] from queue
+2014-02-05 20:53:51,626 [INFO][iWorker.py:50]: thread [1], get [9] from queue
+2014-02-05 20:53:55,628 [DEBUG][iWorker.py:46]: thread [1] is hungerly now
+2014-02-05 20:53:55,629 [DEBUG][iWorker.py:46]: thread [0] is hungerly now
+2014-02-05 20:54:12,357 [DEBUG][iWorker.py:28]: my manager's inQueue size [0]
+2014-02-05 20:54:12,357 [DEBUG][iWorker.py:28]: my manager's inQueue size [0]
+2014-02-05 20:54:12,358 [INFO][iWorker.py:34]: worker 0 begin to run
+2014-02-05 20:54:12,358 [INFO][iWorker.py:34]: worker 1 begin to run
+2014-02-05 20:54:12,358 [INFO][iWorker.py:35]: my manager's inQueue size [10]
+2014-02-05 20:54:12,359 [INFO][iWorker.py:35]: my manager's inQueue size [10]
+2014-02-05 20:54:12,359 [INFO][iWorker.py:50]: thread [0], get [0] from queue
+2014-02-05 20:54:12,359 [INFO][iWorker.py:50]: thread [1], get [1] from queue
+2014-02-05 20:54:15,361 [INFO][iWorker.py:50]: thread [0], get [2] from queue
+2014-02-05 20:54:15,361 [INFO][iWorker.py:50]: thread [1], get [3] from queue
+2014-02-05 20:54:18,363 [INFO][iWorker.py:50]: thread [0], get [4] from queue
+2014-02-05 20:54:18,363 [INFO][iWorker.py:50]: thread [1], get [5] from queue
+2014-02-05 20:54:21,364 [INFO][iWorker.py:50]: thread [0], get [6] from queue
+2014-02-05 20:54:21,365 [INFO][iWorker.py:50]: thread [1], get [7] from queue
+2014-02-05 20:54:24,367 [INFO][iWorker.py:50]: thread [0], get [8] from queue
+2014-02-05 20:54:24,367 [INFO][iWorker.py:50]: thread [1], get [9] from queue
+2014-02-05 20:54:28,370 [DEBUG][iWorker.py:46]: thread [1] is hungerly now
+2014-02-05 20:54:28,370 [DEBUG][iWorker.py:46]: thread [0] is hungerly now
