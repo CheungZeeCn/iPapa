@@ -50,14 +50,28 @@ class Worker(threading.Thread):
                     myLogger.info("thread [%s], get [%s] from queue" % (self.name, get))
                     time.sleep(3)
                     # put
-                    put = "thread [%s], get [%s] from queue, Done" % (self.name, get)
-                    self.outQueue.put(put)
-                    pass
+                    self.doOneTask(get)
                 else:
                     time.sleep(2)
             except Exception, e:
                 myLogger.error('sth wrong[%s] in thread [%s]' % (e, self.name))
                 break
+
+    def doOneTask(self, task):
+        """
+        task structure:
+            {
+                'id': id,  #assigned by input file or manager
+                'inData': inData, # input, can be any type 
+                'outData': outData, # output, can be any type
+                'status': status, #'OK', 'ERROR', 'None'
+                'msg': 'default' 
+            } 
+        """
+        task['outData'] = "thread [%s], get [%s] from queue, Done" % (self.name, task['inData'])
+        task['status'] = 'OK'
+        task['msg'] = 'Done'
+        self.outQueue.put(task) 
 
 class Controller(threading.Thread):
     def __init__(self, myManager):

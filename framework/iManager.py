@@ -73,8 +73,27 @@ class WorkManager(object):
                 by control thread
             2. put sth in self.inQueue
             3. set empty in self.ok
+
+        task structure:
+            {
+                'id': id,  #assigned by input file or manager
+                'inData': inData, # input, can be any type 
+                'outData': outData, # output, can be any type
+                'status': status, #'OK', 'ERROR', 'None'
+                'msg': 'default' 
+            } 
+
         """
-        self.initTasks = [ i for i in range(10) ] 
+        for i in range(10):
+            task = {
+                'id': i,  #assigned by input file or manager
+                'inData': i, # input, can be any type 
+                'outData': None, # output, can be any type
+                'status': 'NONE', #'OK', 'ERROR', 'NONE', 
+                'msg': 'IN QUEUE' 
+            }
+            self.initTasks.append(task)
+
         for i in self.initTasks:
             self.inQueue.put(i)
         myLogger.info("initTasksInQueue Done. self.initTasks:[%s] qsize[%d]" % (self.initTasks, self.inQueue.qsize()))
@@ -97,7 +116,17 @@ class WorkManager(object):
         pass
 
     def dealWithOutput(self, output):
-        myLogger.info('get output[%s]' % (output))
+        """
+        task(output) structure:
+            {
+                'id': id,  #assigned by input file or manager
+                'inData': inData, # input, can be any type 
+                'outData': outData, # output, can be any type
+                'status': status, #'OK', 'ERROR', 'None'
+                'msg': 'default' 
+            } 
+        """
+        myLogger.info('get output: [%s]' % (output))
         self.oneTaskDone()
 
     def flushOutQueue(self):

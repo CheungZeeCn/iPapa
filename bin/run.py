@@ -8,9 +8,10 @@ from setup import iPapa
 import logger
 import logging
 from iManager import WorkManager
+import conf
 
 
 if __name__ == '__main__':
-    m = WorkManager(2) 
+    m = WorkManager(conf.iWorkThreadNum) 
     m.start() 
 
