@@ -4,16 +4,12 @@ import re
 import urllib2
 import urllib
 import cookielib
-import traceback
-import socket
 import logging
 import urlparse
 from bs4 import BeautifulSoup as BS
 
 import time
 import os
-import lxml.html as HTML
-import urlparse
 
 import sys
 
