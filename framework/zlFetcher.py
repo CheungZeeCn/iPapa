@@ -190,6 +190,8 @@ class zlFetcher(object):
 
 
     def pickUpN(self, page):
+        if page == '' or page == None:
+            return -1
         soup = BS(page)
         ''' <td height="23" align="right" bgcolor="#e9e9e9" class="zi"> '''
         td = soup.find(name='td', align='right', class_='zi')
