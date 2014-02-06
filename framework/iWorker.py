@@ -9,6 +9,7 @@ import time
 import Queue
 from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler 
 import HttpWatcher
+from zlFetcher import zlFetcher
 
 myLogger = None
 if 'iPapa_worker' not in logging.Logger.manager.loggerDict:
@@ -26,6 +27,7 @@ class Worker(threading.Thread):
         self.daemon = True
         self.timeStampBegin = time.time()
         myLogger.debug("my manager's inQueue size [%d]" % (self.inQueue.qsize()))
+        self.fetcher = zlFetcher()
 
     def isHungerly(self):
         return self.hungerly
@@ -59,7 +61,7 @@ class Worker(threading.Thread):
 
     def doOneTask(self, task):
         """
-        task structure:
+        task structure: #unicode encoded
             {
                 'id': id,  #assigned by input file or manager
                 'inData': inData, # input, can be any type 
@@ -68,10 +70,44 @@ class Worker(threading.Thread):
                 'msg': 'default' 
             } 
         """
-        task['outData'] = "thread [%s], get [%s] from queue, Done" % (self.name, task['inData'])
-        task['status'] = 'OK'
-        task['msg'] = 'Done'
+        outData = []
+        kw = task['inData'] # task['inData'] should be in unicode
+        n = self.fetcher.getKwN(kw)
+        myLogger.debug("getKwN kw[%s] n[%s]" % (kw, n))
+        if n < 0: # maybe error or not thing
+            #outData = []
+            task['status'] = 'ERROR'
+            task['msg'] = 'ERROR occured in retrieveling patents for this kw'
+            myLogger.error("getKwN kw[%s] n[%s], check it" % (kw, n))
+        elif n == 0:
+            task['status'] = 'NONE'
+            task['msg'] = 'NO patent for this kw'
+            myLogger.warn("getKwN kw[%s] n[%s], so sad" % (kw, n))
+        else: 
+            ret =  self.fetcher.getKwNUrl(kw, n)
+            myLogger.debug("all kw[%s] patent url got[%s]" % (task['inData'], len(ret)))
+            isAllOk = True
+
+            for each in ret:
+                #print "%s\t%s\t%s" % (tuple(each))
+                try:
+                    detail = self.fetcher.getPatentDetail(each[2])
+                    #print "%s" % (detail)
+                    outData.append(detail)
+                except Exception, e:
+                    isAllOk = False
+                    myLogger.error("failed in fetching %s_%s_%s_[%s], %s" % \
+                                        (kw, each[0], each[1], each[2], e))
+
+            if isAllOk == False:
+                task['msg'] = 'Done, but some patent could not be retrieval'
+            else:     
+                task['msg'] = 'Done'
+            task['status'] = 'OK'
+
+        task['outData'] = outData
         self.outQueue.put(task) 
+
 
 class Controller(threading.Thread):
     def __init__(self, myManager):

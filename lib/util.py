@@ -8,6 +8,7 @@ import time
 import pickle
 from string import punctuation
 import logging
+import io, json
 
 def initLog():
     formatStr = ('%(asctime)s [%(levelname)s][%(filename)s:%(lineno)s]:'
@@ -105,6 +106,12 @@ def f1(preList, realList):
 
 def getTopN(d, n):
     return sorted(d.items(), key=lambda d:d[1], reverse=True)[:n]   
+
+def dump2JsonFile(data, fname):
+    with io.open(fname, 'w', encoding='utf-8') as f: 
+        f.write(unicode(json.dumps(data, ensure_ascii=False)))
+        return True
+    return False
 
 if __name__ == '__main__':
     print 'hello world'

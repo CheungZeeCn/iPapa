@@ -9,6 +9,10 @@ import threading
 import time
 from iWorker import Worker, Controller
 import logging
+import util
+from setup import iPapa
+import os
+
 
 myLogger = None
 if 'iPapa_manager' not in logging.Logger.manager.loggerDict:
@@ -31,6 +35,7 @@ class WorkManager(object):
         self.timeStampBegin = time.time()
         self.taskDoneCounter = 0
         self.myLock = threading.Lock()
+        self.timeStamp = util.getTimeStamp()
 
     def __init_wThread_pool(self, threadNum):
         """
@@ -66,6 +71,17 @@ class WorkManager(object):
     def init(self):
         self.initTasksInQueue() 
 
+    def getTaskFromFile(self):
+        fName = os.path.join(iPapa.iDataPath, 'zl.list')   
+        taskDict = {}
+        with open(fName) as f:
+            for each in f:
+                each = each.decode('utf-8')      
+                each = each.strip()
+                each = each.split(" ")
+                taskDict[each[0]] = each[1]
+        return taskDict
+
     def initTasksInQueue(self):
         """
         we can modify this function for different tasks' inition
@@ -84,10 +100,11 @@ class WorkManager(object):
             } 
 
         """
-        for i in range(10):
+        tasksDict = self.getTaskFromFile()
+        for k in tasksDict:
             task = {
-                'id': i,  #assigned by input file or manager
-                'inData': i, # input, can be any type 
+                'id': k,  #assigned by input file or manager
+                'inData': tasksDict[k], # input, can be any type 
                 'outData': None, # output, can be any type
                 'status': 'NONE', #'OK', 'ERROR', 'NONE', 
                 'msg': 'IN QUEUE' 
@@ -127,6 +144,22 @@ class WorkManager(object):
             } 
         """
         myLogger.info('get output: [%s]' % (output))
+        # check status
+        theId = output['id']
+        kw = output['inData']
+        msg = output['msg']
+        if output['status'] == 'ERROR':
+            myLogger.error('id[%s], kw[%s], sth_wrong[%s]' % (theId, kw, msg)) 
+        elif output['status'] == 'NONE':
+            myLogger.warn('id[%s], kw[%s], sth_sad[%s]' % (theId, kw, msg)) 
+        else: # OK
+            #write it down in output dir
+            stamp = self.timeStamp
+            outputPath = iPapa.iOutputPath 
+            outputFile = os.path.join(outputPath, "%s_%s_%s" % (stamp, output['id'], kw))
+            # 
+            util.dump2JsonFile(output, outputFile)
+            myLogger.info('id[%s], kw[%s], OK[%s]' % (theId, kw, msg)) 
         self.oneTaskDone()
 
     def flushOutQueue(self):
