@@ -21,6 +21,7 @@ else:
 class Worker(threading.Thread):
     def __init__(self, myId, myManager):
         threading.Thread.__init__(self, name=myId)
+        self.m = myManager
         self.inQueue = myManager.inQueue
         self.outQueue = myManager.outQueue
         self.hungerly = False
@@ -46,7 +47,9 @@ class Worker(threading.Thread):
                 except Queue.Empty, e:
                     self.hungerly = True
                     myLogger.debug('thread [%s] is hungerly now' % (self.name))
-
+                    if self.m.shouldExit == True:
+                        myLogger.debug('thread [%s] is exiting' % (self.name))
+                        break
                 if self.hungerly == False:
                     # do
                     myLogger.info("thread [%s], get [%s] from queue" % (self.name, get))
@@ -58,6 +61,7 @@ class Worker(threading.Thread):
             except Exception, e:
                 myLogger.error('sth wrong[%s] in thread [%s]' % (e, self.name))
                 break
+        myLogger.debug('thread [%s] exit!' % (self.name))
 
     def doOneTask(self, task):
         """

@@ -4,7 +4,7 @@
 # Copyright 2014 NONE rights reserved.
 
 
-iWorkThreadNum = 2
+iWorkThreadNum = 8
 
 if __name__ == '__main__':
     print 'hello world'

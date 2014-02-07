@@ -12,6 +12,7 @@ import logging
 import util
 from setup import iPapa
 import os
+import json
 
 
 myLogger = None
@@ -36,6 +37,7 @@ class WorkManager(object):
         self.taskDoneCounter = 0
         self.myLock = threading.Lock()
         self.timeStamp = util.getTimeStamp()
+        self.shouldExit = False
 
     def __init_wThread_pool(self, threadNum):
         """
@@ -130,7 +132,14 @@ class WorkManager(object):
         return isAllDone
 
     def exit(self):
-        pass
+        self.logStatus()   
+        self.shouldExit = True
+        # wait for all 
+        for t in self.wThreads:
+            tId = t.name
+            t.join()
+            myLogger.info("thread [%s] joined" % (tId))
+        myLogger.info("all worker threads have been joined, exit")
 
     def dealWithOutput(self, output):
         """
@@ -151,7 +160,13 @@ class WorkManager(object):
         if output['status'] == 'ERROR':
             myLogger.error('id[%s], kw[%s], sth_wrong[%s]' % (theId, kw, msg)) 
         elif output['status'] == 'NONE':
-            myLogger.warn('id[%s], kw[%s], sth_sad[%s]' % (theId, kw, msg)) 
+            # touch a empty file
+            stamp = self.timeStamp
+            outputPath = iPapa.iOutputPath 
+            outputFile = os.path.join(outputPath, "%s_%s_%s_EMPTY" % (stamp, output['id'], kw))
+            # empty file here
+            open(outputFile, 'w')
+            myLogger.warn('id[%s], kw[%s], so_sad[%s]' % (theId, kw, msg)) 
         else: # OK
             #write it down in output dir
             stamp = self.timeStamp
@@ -169,6 +184,24 @@ class WorkManager(object):
         myLogger.info('flushOutQueue Done, outQueue empty guaranteed.')
         return True     
 
+    def logStatus(self):
+        report = {}
+        report['status_data']=[]
+        for t in self.wThreads:
+            name = t.name
+            idle = t.isHungerly()
+            alive = t.isAlive()
+            report['status_data'].append({'thread_name':name, 'is_idle':idle, 'is_alive':alive})
+        report['length_of_inQueue'] = self.inQueue.qsize()
+        report['length_of_outQueue'] = self.outQueue.qsize()
+        runLog = {'timeBeginStr': self.timeStamp , 
+                    'running_duration(seconds)': time.time() - self.timeStampBegin,
+                    'task_done_counter': self.taskDoneCounter,
+                    'initTasks_num': len(self.initTasks),
+                    }
+        report['runLog'] = runLog
+        myLogger.info("STATUS: %s" % (json.dumps(report)))
+
     def start(self):
         """
         start control thread, worker threads, then the manager keep waiting for the output
@@ -179,6 +212,8 @@ class WorkManager(object):
         for i in range(len(self.wThreads)):
             self.wThreads[i].start()  
         #time.sleep(1)
+        nowMin = int(time.time()) / 60
+        lastMin = nowMin
         # start waiting for output
         isAllDone = False
         while True:
@@ -186,7 +221,7 @@ class WorkManager(object):
             # timeout
             try:
                 # keep blocked until 2 secs passed.
-                ret = self.outQueue.get(timeout=2)
+                ret = self.outQueue.get(timeout=5)
                 self.dealWithOutput(ret)
             except Queue.Empty, e:
                 myLogger.debug('outQueue Empty, will check whether all tasks are Done')
@@ -194,9 +229,14 @@ class WorkManager(object):
             # all worker threads have nothing to do ?
             if isAllDone == False:         
                 myLogger.debug("Manger: I get nothing from outQueue, but some worker thread are busy")
+                nowMin = int(time.time()) / 60
+                if nowMin > lastMin:
+                    lastMin = nowMin 
+                    self.logStatus()   
                 #time.sleep(1)
             else:# all done here.
                 # check it for rest
+                self.logStatus()   
                 self.flushOutQueue()
                 break # ready for exit
         myLogger.info("All tasks completed, exit.")
