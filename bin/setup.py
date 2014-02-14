@@ -38,3 +38,5 @@ iPapa.cLogger = logger.getSubLogger('iPapa_controller')
 
 if __name__ == '__main__':
     print "\n".join([iPapa.iPath, iPapa.iBinPath, iPapa.iConfPath, iPapa.iLibPath, iPapa.iOutputPath, iPapa.iDataPath, iPapa.iFramePath, iPapa.iLogPath, iPapa.iTmpPath])
+# It's a sentence.
+
