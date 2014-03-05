@@ -113,6 +113,15 @@ def dump2JsonFile(data, fname):
         return True
     return False
 
+def loadJsonFile(fname):
+    ret = None
+    with open(fname) as f: 
+        ret = json.loads(f.read())
+    return ret
+
+
+
+
 if __name__ == '__main__':
     print 'hello world'
 

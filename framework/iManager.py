@@ -14,6 +14,13 @@ from setup import iPapa
 import os
 import json
 
+def findCompanyInDir(com, dirPath='.'):
+    fList = os.listdir(dirPath)    
+    for fName in fList:
+        if com in fName.decode('utf-8'):      
+            return True    
+    return False
+
 
 myLogger = None
 if 'iPapa_manager' not in logging.Logger.manager.loggerDict:
@@ -22,7 +29,8 @@ else:
     myLogger = logging.getLogger('iPapa_manager')
 
 class WorkManager(object):
-    def __init__(self, threadNum=2):
+    def __init__(self, threadNum=2, isReRun=False):
+        self.isReRun = isReRun
         self.inQueue = Queue.Queue()
         self.outQueue = Queue.Queue()
         self.wThreads = []
@@ -104,6 +112,10 @@ class WorkManager(object):
         """
         tasksDict = self.getTaskFromFile()
         for k in tasksDict:
+            uk = k.decode('utf8') 
+            if self.isReRun:
+                if findCompanyInDir(uk, iPapa.iOutputPath):
+                    continue
             task = {
                 'id': k,  #assigned by input file or manager
                 'inData': tasksDict[k], # input, can be any type 

@@ -12,6 +12,6 @@ import conf
 
 
 if __name__ == '__main__':
-    m = WorkManager(conf.iWorkThreadNum) 
+    m = WorkManager(conf.iWorkThreadNum, True) 
     m.start() 
 
