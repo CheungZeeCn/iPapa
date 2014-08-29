@@ -18,6 +18,9 @@ copy the dir to the place you want.
 Done.
 
 #Try Demo
+## 如果你在中国
+demo是挖voa的内容，但是voa的内容是被GFW认证的，所以你假如要试用的话，请先确认你的服务器能够连接到 http://learningenglish.voanews.com/
+
 ## just run
 ```shell
 
