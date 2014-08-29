@@ -7,19 +7,16 @@
 import Queue
 import threading
 import time
-from iWorker import Worker, Controller
+from iWorker import Worker
+from iController import Controller
+from iParser import Parser
 import logging
 import util
 from setup import iPapa
 import os
 import json
-
-def findCompanyInDir(com, dirPath='.'):
-    fList = os.listdir(dirPath)    
-    for fName in fList:
-        if com in fName.decode('utf-8'):      
-            return True    
-    return False
+# a Counter class with lock
+from mCounter import mCounter
 
 
 myLogger = None
@@ -29,23 +26,46 @@ else:
     myLogger = logging.getLogger('iPapa_manager')
 
 class WorkManager(object):
-    def __init__(self, threadNum=2, isReRun=False):
+    def __init__(self, seedTask, threadNum=2, parserNum=2, isReRun=False):
+        # not implemented now, set it true for crash recover
         self.isReRun = isReRun
+        self.sign = 'manager'
+        # queues for download
         self.inQueue = Queue.Queue()
         self.outQueue = Queue.Queue()
+        # queues for parse
+        self.inPQueue = self.outQueue
+        self.outPQueue = Queue.Queue()
         self.wThreads = []
+        self.pThreads = []
+        # controller provides interfaces for human beings
         self.cThread = None
-        self.initTasks = []
+
+        #self.initTasks = []
         #self.tasksDone = []
+        #taskCounter for giving id to each task
+        self.taskCounter = mCounter(0)
+        self.taskDoneCounter = mCounter(0)
+        self.taskFailedCounter = mCounter(0)
+        # activeTasks is only a pool for monitoring the tasks
+        self.activeTasks = []
+        self.myLock = threading.Lock()
+        # init threads and tasks
         self.__init_wThread_pool(threadNum)
+        self.__init_pThread_pool(parserNum)
         self.__init_control_thread() # init self.cThread
-        self.init()
+        self.init(seedTask)
         # about running
         self.timeStampBegin = time.time()
-        self.taskDoneCounter = 0
-        self.myLock = threading.Lock()
-        self.timeStamp = util.getTimeStamp()
+        self.timeStampStr = util.getTimeStamp()
         self.shouldExit = False
+        # todo, not implemented
+        self.whatWeHave = {} 
+        self.__set_tsOutputPath()
+    
+    def __set_tsOutputPath(self):
+        tsOutputPath = os.path.join(iPapa.iOutputPath, self.timeStampStr)       
+        iPapa.iTsOutputPath = tsOutputPath
 
     def __init_wThread_pool(self, threadNum):
         """
@@ -56,8 +76,18 @@ class WorkManager(object):
         # OK! we init all the wThreads 
         return True
 
+    def __init_pThread_pool(self, threadNum):
+        """
+        init the thread pool, assign thread ids to them
+        """
+        for i in range(threadNum):
+            self.pThreads.append(Parser(str(i), self))
+        # OK! we init all the wThreads 
+        return True
+
     def __init_control_thread(self):
         """
+        ///to be updated
         we init the control thread here for:
             1. asking status
                 11. How many threads
@@ -72,63 +102,52 @@ class WorkManager(object):
         pass
 
     def oneTaskDone(self):
-        if self.myLock.acquire():
-            self.taskDoneCounter += 1 
-            self.myLock.release()
-            return True
-        return False
+        self.taskDoneCounter.inc()
+        return True
 
-    def init(self):
-        self.initTasksInQueue() 
+    def initWhatWeHave(self):
+        if self.isReRun == True: # return to my last life
+            self.whatWeHave = findoutWhatWeHave()
+        else:
+            self.whatWeHave = {}
 
-    def getTaskFromFile(self):
-        fName = os.path.join(iPapa.iDataPath, 'zl.list')   
-        taskDict = {}
-        with open(fName) as f:
-            for each in f:
-                each = each.decode('utf-8')      
-                each = each.strip()
-                each = each.split(" ")
-                taskDict[each[0]] = each[1]
-        return taskDict
+    def init(self, seedTask):
+        # todo support tasks in init
+        self.initWhatWeHave()
+        self.initTasksInQueue(seedTask) 
 
-    def initTasksInQueue(self):
-        """
-        we can modify this function for different tasks' inition
-            1. init self.tasks, which can be shown \
-                by control thread
-            2. put sth in self.inQueue
-            3. set empty in self.ok
+    def initTasksInQueue(self, seedTask):
+        #sign it
+        self.packTask(seedTask)
+        self.signTask(seedTask)
+        self.addTask(seedTask)
+        myLogger.info("initTasksInQueue Done, seedTask is: [%s]"  % (seedTask.id))
 
-        task structure:
-            {
-                'id': id,  #assigned by input file or manager
-                'inData': inData, # input, can be any type 
-                'outData': outData, # output, can be any type
-                'status': status, #'OK', 'ERROR', 'None'
-                'msg': 'default' 
-            } 
+    def signTask(self, task):
+        task.handleBy = self.sign
+        task.signTs.append((task.handleBy, time.time())) 
 
-        """
-        tasksDict = self.getTaskFromFile()
-        for k in tasksDict:
-            uk = k.decode('utf8') 
-            if self.isReRun:
-                if findCompanyInDir(uk, iPapa.iOutputPath):
-                    continue
-            task = {
-                'id': k,  #assigned by input file or manager
-                'inData': tasksDict[k], # input, can be any type 
-                'outData': None, # output, can be any type
-                'status': 'NONE', #'OK', 'ERROR', 'NONE', 
-                'msg': 'IN QUEUE' 
-            }
-            self.initTasks.append(task)
+    def addTask(self, task):
+        myLogger.info("addTask [%s]"  % (task.id))
+        self.inQueue.put(task)
+        with self.myLock:
+            self.activeTasks.append(task)
 
-        for i in self.initTasks:
-            self.inQueue.put(i)
-        myLogger.info("initTasksInQueue Done. self.initTasks:[%s] qsize[%d]" % (self.initTasks, self.inQueue.qsize()))
-        pass
+    def rmTask(self, task):
+        # make sure the task is out of the queue 
+        # before we call the rmTask()
+        with self.myLock:
+            for i in range(len(self.activeTasks)):
+                if self.activeTasks[i].id == task.id:
+                    del(self.activeTasks[i])
+                    break
+        return True      
+
+    def packTask(self, task):
+        #set the id for a task
+        newId = self.taskCounter.inc()
+        task.id = newId
+        return task
 
     def isAllDone(self):
         # check inQueue
@@ -138,7 +157,11 @@ class WorkManager(object):
         # check if all work is Done 
         isAllDone = True
         for t in self.wThreads:
-            if t.isHungerly() == False:
+            if t.isAlive() and t.isHungerly() == False:
+                isAllDone = False    
+                break
+        for t in self.pThreads:
+            if t.isAlive() and t.isHungerly() == False:
                 isAllDone = False    
                 break
         return isAllDone
@@ -150,50 +173,20 @@ class WorkManager(object):
         for t in self.wThreads:
             tId = t.name
             t.join()
-            myLogger.info("thread [%s] joined" % (tId))
-        myLogger.info("all worker threads have been joined, exit")
+            myLogger.info("worker thread [%s] joined" % (tId))
+        for t in self.pThreads:
+            tId = t.name
+            t.join()
+            myLogger.info("parser thread [%s] joined" % (tId))
+        self.logStatus()
+        myLogger.info("all worker/parser threads have been joined, exit")
 
-    def dealWithOutput(self, output):
-        """
-        task(output) structure:
-            {
-                'id': id,  #assigned by input file or manager
-                'inData': inData, # input, can be any type 
-                'outData': outData, # output, can be any type
-                'status': status, #'OK', 'ERROR', 'None'
-                'msg': 'default' 
-            } 
-        """
-        myLogger.info('get output: [%s]' % (output))
-        # check status
-        theId = output['id']
-        kw = output['inData']
-        msg = output['msg']
-        if output['status'] == 'ERROR':
-            myLogger.error('id[%s], kw[%s], sth_wrong[%s]' % (theId, kw, msg)) 
-        elif output['status'] == 'NONE':
-            # touch a empty file
-            stamp = self.timeStamp
-            outputPath = iPapa.iOutputPath 
-            outputFile = os.path.join(outputPath, "%s_%s_%s_EMPTY" % (stamp, output['id'], kw))
-            # empty file here
-            open(outputFile, 'w')
-            myLogger.warn('id[%s], kw[%s], so_sad[%s]' % (theId, kw, msg)) 
-        else: # OK
-            #write it down in output dir
-            stamp = self.timeStamp
-            outputPath = iPapa.iOutputPath 
-            outputFile = os.path.join(outputPath, "%s_%s_%s" % (stamp, output['id'], kw))
-            # 
-            util.dump2JsonFile(output, outputFile)
-            myLogger.info('id[%s], kw[%s], OK[%s]' % (theId, kw, msg)) 
-        self.oneTaskDone()
 
-    def flushOutQueue(self):
-        while not self.outQueue.empty():
-            ret = self.outQueue.get()
-            self.dealWithOutput(ret)
-        myLogger.info('flushOutQueue Done, outQueue empty guaranteed.')
+    def flushOutPQueue(self):
+        while not self.outPQueue.empty():
+            ret = self.outPQueue.get()
+            self.dealWithParserOutput(ret)
+        myLogger.info('flushOutPQueue Done, outPQueue empty guaranteed.')
         return True     
 
     def logStatus(self):
@@ -203,26 +196,61 @@ class WorkManager(object):
             name = t.name
             idle = t.isHungerly()
             alive = t.isAlive()
-            report['status_data'].append({'thread_name':name, 'is_idle':idle, 'is_alive':alive})
+            report['status_data'].append({'wThread_name':name, 'is_idle':idle, 'is_alive':alive})
+        for t in self.pThreads:
+            name = t.name
+            idle = t.isHungerly()
+            alive = t.isAlive()
+            report['status_data'].append({'pThread_name':name, 'is_idle':idle, 'is_alive':alive})
+        activeCount = threading.activeCount()
+        report['all_thread_activeCount'] = activeCount
+        # todo make it more clear here
+        report['active_tasks'] = [ [t.id, t.status, t.url ] for t in self.activeTasks]
+
         report['length_of_inQueue'] = self.inQueue.qsize()
         report['length_of_outQueue'] = self.outQueue.qsize()
-        runLog = {'timeBeginStr': self.timeStamp , 
+        report['length_of_inPQueue'] = self.inPQueue.qsize()
+        report['length_of_outPQueue'] = self.outPQueue.qsize()
+        runLog = {'timeBeginStr': self.timeStampStr , 
                     'running_duration(seconds)': time.time() - self.timeStampBegin,
-                    'task_done_counter': self.taskDoneCounter,
-                    'initTasks_num': len(self.initTasks),
+                    'task_done_counter': self.taskDoneCounter.get(),
+                    'task_failed_counter': self.taskFailedCounter.get(),
+                    'task_all_counter': self.taskCounter.get(),
                     }
         report['runLog'] = runLog
         myLogger.info("STATUS: %s" % (json.dumps(report)))
+
+    def dealWithParserOutput(self, task):
+        if task.status == 'done':
+            #counters
+            self.taskDoneCounter.inc()
+            self.rmTask(task)
+            #print "task id %s done" % (task.id)
+            myLogger.info("task [%d] Done [%s]" % (task.id, task.exprMe()))
+        else:
+            #counters
+            self.taskFailedCounter.inc()
+            self.rmTask(task)
+            myLogger.error("task [%d] Failed [%s], dump it" % (task.id, task.exprMe()))
+            task['__expr__'] = task.exprMe()
+            fileName = os.path.join(iPapa.iTsOutputPath, "failedTask.%d.json" % task.id)
+            util.dump2JsonFile(task, fileName)
+            # todo :if we want to support the repeat argument
+            #  take care of the function flush
+        pass
 
     def start(self):
         """
         start control thread, worker threads, then the manager keep waiting for the output
         """
-        # strat control thread
+        # start control thread
         self.cThread.start()
         # start workers
         for i in range(len(self.wThreads)):
             self.wThreads[i].start()  
+        # start parsers
+        for i in range(len(self.pThreads)):
+            self.pThreads[i].start()  
         #time.sleep(1)
         nowMin = int(time.time()) / 60
         lastMin = nowMin
@@ -232,15 +260,16 @@ class WorkManager(object):
             ret = None
             # timeout
             try:
-                # keep blocked until 2 secs passed.
-                ret = self.outQueue.get(timeout=5)
-                self.dealWithOutput(ret)
+                # keep blocked until timeout secs passed.
+                ret = self.outPQueue.get(timeout=5)
+                self.dealWithParserOutput(ret)
             except Queue.Empty, e:
-                myLogger.debug('outQueue Empty, will check whether all tasks are Done')
+                myLogger.debug('outPQueue Empty, will check whether all tasks are Done')
+                # if all the threads(not dead) are hungerly
                 isAllDone = self.isAllDone()
             # all worker threads have nothing to do ?
             if isAllDone == False:         
-                myLogger.debug("Manger: I get nothing from outQueue, but some worker thread are busy")
+                myLogger.debug("Manger: I get nothing from outPQueue, but some worker thread are busy")
                 nowMin = int(time.time()) / 60
                 if nowMin > lastMin:
                     lastMin = nowMin 
@@ -248,14 +277,11 @@ class WorkManager(object):
                 #time.sleep(1)
             else:# all done here.
                 # check it for rest
-                self.logStatus()   
-                self.flushOutQueue()
+                self.logStatus()
+                self.flushOutPQueue()
                 break # ready for exit
-        myLogger.info("All tasks completed, exit.")
+        myLogger.info("All tasks completed, about to exit.")
         self.exit()
 
 if __name__ == '__main__':
-    initLog()
-    m = WorkManager(2)
-    m.start()
-
+    pass

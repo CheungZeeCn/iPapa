@@ -2,6 +2,10 @@
 # -*- coding: utf-8 -*-  
 # by zhangzhi @2013-11-18 19:25:15 
 # Copyright 2013 NONE rights reserved.
+"""
+A file storing some common functions
+"""
+
 
 import re
 import time
@@ -9,6 +13,11 @@ import pickle
 from string import punctuation
 import logging
 import io, json
+import linecache
+import sys
+import os
+import urlparse
+import traceback
 
 def initLog():
     formatStr = ('%(asctime)s [%(levelname)s][%(filename)s:%(lineno)s]:'
@@ -113,15 +122,50 @@ def dump2JsonFile(data, fname):
         return True
     return False
 
+def dump2JsonStr(data):
+    return unicode(json.dumps(data, ensure_ascii=False))
+
 def loadJsonFile(fname):
     ret = None
     with open(fname) as f: 
-        ret = json.loads(f.read())
+        try:
+            ret = json.loads(f.read())
+        except ValueError, e:
+            #logging.error('loading file [%s][%s]' % (fname, e))
+            pass
     return ret
 
 
+def printException():
+    exc_type, exc_value, exc_traceback = sys.exc_info() 
+    traceback.print_exception(exc_type, exc_value, exc_traceback,
+                                  limit=2, file=sys.stderr)
 
+def exprException():
+    exc_type, exc_value, exc_traceback = sys.exc_info() 
+    return dump2JsonStr(traceback.format_exception(exc_type, exc_value, exc_traceback,
+                                  limit=2, file=sys.stderr))
+
+def mkdir(name):
+    if not os.path.exists(name):
+        try: 
+            os.makedirs(name)   
+        except Exception, e:
+            return False
+    return True
+
+def writeFile(fname, data):
+    OK = False
+    with open(fname, 'w') as f:
+        f.write(data)
+        OK = True
+    return OK
+
+def getUrlFileName(url):
+    url = urlparse.urlparse(url)    
+    return os.path.basename(url.path)
 
 if __name__ == '__main__':
-    print 'hello world'
+    print getUrlFileName("http://a.com/b/c/d.html?asdf=asdw")
+
 

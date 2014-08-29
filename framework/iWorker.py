@@ -7,9 +7,10 @@ import threading
 import logging
 import time
 import Queue
-from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler 
-import HttpWatcher
-from zlFetcher import zlFetcher
+from iFetcher import Fetcher
+import util
+import os
+from setup import iPapa
 
 myLogger = None
 if 'iPapa_worker' not in logging.Logger.manager.loggerDict:
@@ -28,7 +29,7 @@ class Worker(threading.Thread):
         self.daemon = True
         self.timeStampBegin = time.time()
         myLogger.debug("my manager's inQueue size [%d]" % (self.inQueue.qsize()))
-        self.fetcher = zlFetcher()
+        self.fetcher = Fetcher()
 
     def isHungerly(self):
         return self.hungerly
@@ -52,79 +53,58 @@ class Worker(threading.Thread):
                         break
                 if self.hungerly == False:
                     # do
-                    myLogger.info("thread [%s], get [%s] from queue" % (self.name, get))
+                    myLogger.info("thread [%s], get task[%s] from queue" % (self.name, get.id))
                     time.sleep(3)
                     # put
                     self.doOneTask(get)
                 else:
                     time.sleep(2)
             except Exception, e:
+                util.printException()
                 myLogger.error('sth wrong[%s] in thread [%s]' % (e, self.name))
-                break
+                task.status =  'failed'
+                if task.msg !=  '':
+                    task.msg = util.exprException()
+                #break
         myLogger.debug('thread [%s] exit!' % (self.name))
+
+    def signTask(self, task):
+        task.handleBy = "w_%s" % self.name
+        task.signTs.append((task.handleBy, time.time()))
 
     def doOneTask(self, task):
         """
-        task structure: #unicode encoded
-            {
-                'id': id,  #assigned by input file or manager
-                'inData': inData, # input, can be any type 
-                'outData': outData, # output, can be any type
-                'status': status, #'OK', 'ERROR', 'None'
-                'msg': 'default' 
-            } 
         """
-        outData = []
-        kw = task['inData'] # task['inData'] should be in unicode
-        n = self.fetcher.getKwN(kw)
-        myLogger.debug("getKwN kw[%s] n[%s]" % (kw, n))
-        if n < 0: # maybe error or not thing
-            #outData = []
-            task['status'] = 'ERROR'
-            task['msg'] = 'ERROR occured in retrieveling patents for this kw'
-            myLogger.error("getKwN kw[%s] n[%s], check it" % (kw, n))
-        elif n == 0:
-            task['status'] = 'NONE'
-            task['msg'] = 'NO patent for this kw'
-            myLogger.warn("getKwN kw[%s] n[%s], so sad" % (kw, n))
-        else: 
-            ret =  self.fetcher.getKwNUrl(kw, n)
-            myLogger.debug("all kw[%s] patent url got[%s]" % (task['inData'], len(ret)))
-            isAllOk = True
+        self.signTask(task)
+        task.status = 'down'
+        outData = None
+        if task.taskType == 'page': 
+            data = self.fetcher.keepFetchRead(task.url, task.postdata, task.timeout, task.tryTimes, True)
+        elif task.taskType == 'media':
+            #genPath
+            to = ''
+            if task.dest != '':
+                to = task.dest
+            else:
+                # todo mk it more random
+                to = util.getUrlFileName(task.url)
+                if to == '':
+                    to = "unameFile"
+                task.dest = to
+            dirPath = iPapa.iTsOutputPath
+            to = os.path.join(dirPath, to)
+            data = self.fetcher.download(task.url, to, task.postdata, task.timeout, task.tryTimes, True)
 
-            for each in ret:
-                #print "%s\t%s\t%s" % (tuple(each))
-                try:
-                    detail = self.fetcher.getPatentDetail(each[2])
-                    #print "%s" % (detail)
-                    outData.append(detail)
-                except Exception, e:
-                    isAllOk = False
-                    myLogger.error("failed in fetching %s_%s_%s_[%s], %s" % \
-                                        (kw, each[0], each[1], each[2], e))
+        if data == None: #download error
+            # set sth, put it into error     
+            task.status = 'failed'
+            task.msg = 'download failed'
+            myLogger.error('[wThread_%s]Fetcher data failed in task.id[%d]' % (self.name, task.id))
+        else: # OK
+            task['__data'] = data
+            task.status = 'downed'
 
-            if isAllOk == False:
-                task['msg'] = 'Done, but some patent could not be retrieval'
-            else:     
-                task['msg'] = 'Done'
-            task['status'] = 'OK'
-
-        task['outData'] = outData
         self.outQueue.put(task) 
-
-
-class Controller(threading.Thread):
-    def __init__(self, myManager):
-        threading.Thread.__init__(self, name='controller')
-        self.m = myManager
-        self.timeStampBegin = time.time()
-        self.daemon = True
-    
-    def isAllDone(self):
-        return self.myManager.isAllDone()
-
-    def run(self):
-        HttpWatcher.run(port=28282, m=self.m)
 
 
 if __name__ == '__main__':
