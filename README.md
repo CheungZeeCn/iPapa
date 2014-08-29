@@ -29,3 +29,6 @@ ClassPageHandler.py      ContentPageHandler.py    MainPageHandler.pyc      run.p
 [cheungzee@pn-206-246 bin]$python run.py
 
 ```
+## check status by http
+wget localhost:28282  
+or type in localhost:28282 in your favourite broswer.
