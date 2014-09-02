@@ -46,39 +46,7 @@ class WatchRequestHandler(BaseHTTPRequestHandler):
         report = {}
 
         m = self.server.watchHandler
-        # How many threads
-        report['wThreads_Num'] = len(m.wThreads)
-        report['pThreads_Num'] = len(m.pThreads)
-        # The status of  each threads
-        report['status_data']=[]
-
-        for t in m.wThreads:
-            name = t.name
-            idle = t.isHungerly()
-            alive = t.isAlive()
-            report['status_data'].append({'w_thread_name':name, 'is_idle':idle, 'is_alive':alive})
-        for t in m.pThreads:
-            name = t.name
-            idle = t.isHungerly()
-            alive = t.isAlive()
-            report['status_data'].append({'p_thread_name':name, 'is_idle':idle, 'is_alive':alive})
-        # threading.activeCount()
-        activeCount = threading.activeCount()
-        report['all_thread_activeCount'] = activeCount
-        # The leangths for inQueue and outQueue
-        report['length_of_inQueue'] = m.inQueue.qsize()
-        report['length_of_outQueue'] = m.outQueue.qsize()
-        report['length_of_inPQueue'] = m.inPQueue.qsize()
-        report['length_of_outPQueue'] = m.outPQueue.qsize()
-        #The running times(duration, timeBegin...).
-        timeBeginStr = util.getTimeStr(m.timeStampBegin)
-        runLog = {'timeBeginStr': timeBeginStr, 
-                    'running_duration(seconds)': time.time() - m.timeStampBegin,
-                    'task_done_counter': m.taskDoneCounter.get(),
-                    'task_failed_counter': m.taskFailedCounter.get(),
-                    'task_all_counter': m.taskCounter.get(),
-                    }
-        report['runLog'] = runLog
+        report = m.genStatus()
         # simple at first, no router now
         buf = '%s' % (json.dumps(report))
         # how many all tasks done

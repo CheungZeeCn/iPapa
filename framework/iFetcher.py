@@ -12,6 +12,7 @@ import time
 import os
 
 import sys
+sys.path.insert(1, "../lib")
 import util
 
 
@@ -139,32 +140,78 @@ class Fetcher(object):
             return True
         return False
 
+    """
     def download(self, url, to, postdata={}, timeout=60, times=3, safeFetch=True):
         myLogger.info("fetcher download from [%s] to [%s]" % (url, to))
         ret = None
         while times!=0:
             status=''
             if safeFetch == True:
-                ret = self.safeFetch(url, postdata, timeout)
+                resp = self.safeFetch(url, postdata, timeout)
             else:
-                ret, status = self.fetch(url, postdata, timeout)
+                resp, status = self.fetch(url, postdata, timeout)
 
             if util.mkdir(os.path.dirname(to)) == False:
                 times -= 1
                 ret = None
                 continue
-            if status == 'OK' or (status == '' and ret != None): # fetch ok
-                CHUNK = 512 * 1024
+
+            if status == 'OK' or (status == '' and resp != None): # fetch ok
+                #CHUNK = 512 * 1024
                 with open(to, 'wb') as f:
-                    while True: 
-                        chunk = ret.read(CHUNK)
-                        if not chunk: break
+                    ret = True
+                    try:
+                        chunk = resp.read()
                         f.write(chunk)
-                # OK
-                ret = True
-                break
+                    except Exception, e:
+                        msg = util.exprException()
+                        util.printException()
+                        ret = None
+
+                if ret == True:
+                    break
+            times -= 1
+        return ret
+    """
+
+
+    def download(self, url, to, postdata={}, timeout=60, times=3, safeFetch=True):
+        myLogger.info("fetcher download from [%s] to [%s]" % (url, to))
+        ret = None
+        while times!=0:
+            status=''
+            if safeFetch == True:
+                resp = self.safeFetch(url, postdata, timeout)
+            else:
+                resp, status = self.fetch(url, postdata, timeout)
+
+            if util.mkdir(os.path.dirname(to)) == False:
+                times -= 1
+                ret = None
+                continue
+
+            if status == 'OK' or (status == '' and resp != None): # fetch ok
+                CHUNK = 1024 * 1024 * 5
+                with open(to, 'wb') as f:
+                    ret = True
+                    try:
+                        while True:
+                            chunk = resp.read(CHUNK)
+                            if not chunk: 
+                                break
+                            f.write(chunk)
+                    except Exception, e:
+                        msg = util.exprException()
+                        util.printException()
+                        ret = None
+
+                if ret == True:
+                    break
             times -= 1
         return ret
 
 if __name__ == '__main__':
-    pass
+    f = Fetcher()
+    url = "http://av.voanews.com/clips/LERE/2014/08/27/8845a541-a3b2-4539-a417-6f6644edd222.mp3?download=1"
+    print f.download(url, "./here.mp3")
+    #def download(self, url, to, postdata={}, timeout=60, times=3, safeFetch=True):

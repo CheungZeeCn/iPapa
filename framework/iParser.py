@@ -65,9 +65,9 @@ class Parser(threading.Thread):
             except Exception, e:
                 util.printException()
                 myLogger.error('sth wrong[%s] in pThread [%s]' % (e, self.name))
-                task.status =  'failed'
-                if task.msg !=  '':
-                    task.msg = util.exprException()
+                get.status =  'failed'
+                if get.msg !=  '':
+                    get.msg = util.exprException()
                 #break
         myLogger.debug('pThread [%s] exit!' % (self.name))
 
@@ -106,9 +106,13 @@ class Parser(threading.Thread):
                     self.signTask(t)
                     self.m.addTask(t)
                     # add it in my manager's queue
-        if isOK and task.status != 'failed':
-            task.status = 'done'
-            myLogger.info("OK in parsing, set task[%d] done" % (task.id))
+        if isOK:
+            if task.status == 'done':
+                myLogger.info("OK in parsing, set task[%d] done" % (task.id))
+            elif task.status == 'ignore':
+                myLogger.info("OK in parsing, set task[%d] ignore" % (task.id))
+            else:
+                task.status = 'done'
         else:
             task.status = 'failed'
         # put it in the outPQueue

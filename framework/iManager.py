@@ -17,6 +17,7 @@ import os
 import json
 # a Counter class with lock
 from mCounter import mCounter
+import sys
 
 
 myLogger = None
@@ -27,6 +28,7 @@ else:
 
 class WorkManager(object):
     def __init__(self, seedTask, threadNum=2, parserNum=2, isReRun=False):
+        self.returnVal = True
         # not implemented now, set it true for crash recover
         self.isReRun = isReRun
         self.sign = 'manager'
@@ -47,6 +49,7 @@ class WorkManager(object):
         self.taskCounter = mCounter(0)
         self.taskDoneCounter = mCounter(0)
         self.taskFailedCounter = mCounter(0)
+        self.taskIgnoreCounter = mCounter(0)
         # activeTasks is only a pool for monitoring the tasks
         self.activeTasks = []
         self.myLock = threading.Lock()
@@ -179,7 +182,9 @@ class WorkManager(object):
             t.join()
             myLogger.info("parser thread [%s] joined" % (tId))
         self.logStatus()
-        myLogger.info("all worker/parser threads have been joined, exit")
+        myLogger.info("all worker/parser threads have been joined, exit!")
+        if self.returnVal != True: 
+            sys.exit("[iPapa] Not ALL task finished, plz check it.")
 
 
     def flushOutPQueue(self):
@@ -189,7 +194,7 @@ class WorkManager(object):
         myLogger.info('flushOutPQueue Done, outPQueue empty guaranteed.')
         return True     
 
-    def logStatus(self):
+    def genStatus(self):
         report = {}
         report['status_data']=[]
         for t in self.wThreads:
@@ -215,9 +220,14 @@ class WorkManager(object):
                     'running_duration(seconds)': time.time() - self.timeStampBegin,
                     'task_done_counter': self.taskDoneCounter.get(),
                     'task_failed_counter': self.taskFailedCounter.get(),
+                    'task_ignore_counter': self.taskIgnoreCounter.get(),
                     'task_all_counter': self.taskCounter.get(),
                     }
         report['runLog'] = runLog
+        return report
+
+    def logStatus(self):
+        report = self.genStatus()
         myLogger.info("STATUS: %s" % (json.dumps(report)))
 
     def dealWithParserOutput(self, task):
@@ -227,8 +237,21 @@ class WorkManager(object):
             self.rmTask(task)
             #print "task id %s done" % (task.id)
             myLogger.info("task [%d] Done [%s]" % (task.id, task.exprMe()))
+            task['__expr__'] = task.exprMe()
+            fileName = os.path.join(iPapa.iTsOutputPath, "doneTask.%d.json" % task.id)
+            util.dump2JsonFile(task['__expr__'], fileName)
+        elif task.status == 'ignore':
+            self.taskIgnoreCounter.inc()
+            self.rmTask(task)
+            #print "task id %s done" % (task.id)
+            myLogger.info("task [%d] Ignored [%s]" % (task.id, task.exprMe()))
+            task['__expr__'] = task.exprMe()
+            fileName = os.path.join(iPapa.iTsOutputPath, "ignoreTask.%d.json" % task.id)
+            util.dump2JsonFile(task['__expr__'], fileName)
+            
         else:
             #counters
+            self.returnVal = False
             self.taskFailedCounter.inc()
             self.rmTask(task)
             myLogger.error("task [%d] Failed [%s], dump it" % (task.id, task.exprMe()))

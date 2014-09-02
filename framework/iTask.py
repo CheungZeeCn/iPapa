@@ -48,7 +48,7 @@ class Task(dict):
                 'taskType', 'repeatTime', 'tryTimes', 'timeout', 'msg', 
                 'ts', 'signTs', 'postdata', 'dest'):
             retDict[k] = getattr(self, k)
-        return util.dump2JsonStr(retDict)
+        return util.dump2JsonStr(retDict).encode('utf-8')
 
     
 if __name__ == '__main__':

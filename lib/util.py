@@ -117,6 +117,7 @@ def getTopN(d, n):
     return sorted(d.items(), key=lambda d:d[1], reverse=True)[:n]   
 
 def dump2JsonFile(data, fname):
+    mkdir(os.path.dirname(fname))
     with io.open(fname, 'w', encoding='utf-8') as f: 
         f.write(unicode(json.dumps(data, ensure_ascii=False)))
         return True
@@ -144,7 +145,7 @@ def printException():
 def exprException():
     exc_type, exc_value, exc_traceback = sys.exc_info() 
     return dump2JsonStr(traceback.format_exception(exc_type, exc_value, exc_traceback,
-                                  limit=2, file=sys.stderr))
+                                  limit=2,))
 
 def mkdir(name):
     if not os.path.exists(name):
@@ -156,6 +157,7 @@ def mkdir(name):
 
 def writeFile(fname, data):
     OK = False
+    mkdir(os.path.dirname(fname))
     with open(fname, 'w') as f:
         f.write(data)
         OK = True

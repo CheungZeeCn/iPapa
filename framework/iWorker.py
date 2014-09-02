@@ -62,9 +62,9 @@ class Worker(threading.Thread):
             except Exception, e:
                 util.printException()
                 myLogger.error('sth wrong[%s] in thread [%s]' % (e, self.name))
-                task.status =  'failed'
-                if task.msg !=  '':
-                    task.msg = util.exprException()
+                get.status =  'failed'
+                if get.msg !=  '':
+                    get.msg = util.exprException()
                 #break
         myLogger.debug('thread [%s] exit!' % (self.name))
 

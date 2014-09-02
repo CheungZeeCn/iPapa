@@ -50,7 +50,7 @@ class ContentMp3PageHandler(object):
 
 
 if __name__ == '__main__':
-    data = open('tmp2').read()
+    data = open('tmp').read()
     m = ContentMp3PageHandler()
     ret, status =  m.parseContent(data)
     for k in ret:

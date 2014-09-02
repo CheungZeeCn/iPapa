@@ -54,11 +54,15 @@ class ContentPageHandler(object):
                 newT['key'] = task['key']
                 newT['audioType'] = os.path.splitext(dest)[1].upper()
                 newTasks.append(newT)
-            elif 'contentMp3Page' in ret:
-                url = ret['contentMp3Page']
-                newT = Task(-1, url=urlparse.urljoin(task.url, url), handler='AudioPageHandler', ref=task.url,) 
-                newT['key'] = task['key']
-                newTasks.append(newT)
+            elif 'contentMp3Page' in ret: #always be with big file, we ignore it 
+                #url = ret['contentMp3Page']
+                #newT = Task(-1, url=urlparse.urljoin(task.url, url), handler='ContentMp3PageHandler', ref=task.url,) 
+                #newT['key'] = task['key']
+                #newTasks.append(newT)
+                task.status = 'ignore' 
+                meta['isIgnore'] = True
+                meta['ignoreMsg'] = "Audio file is too big, we should ignore this now."
+                task.msg = 'Audio file is too big, we should ignore this now.' 
             else:
                 #Failed
                 task.status = 'failed' 
@@ -82,6 +86,8 @@ class ContentPageHandler(object):
 
         else:
             task.status = 'failed'
+        if task.status == 'ignore': 
+            return {}
         if newTasks != []:
             return {'newTasks': newTasks}
         return {}
