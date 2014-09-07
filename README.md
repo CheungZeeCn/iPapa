@@ -60,7 +60,7 @@ or type in localhost:28282 in your favourite broswer.
 ### Task.status
 
 There are status of the task noted by task.status,
-
+![image](https://raw.githubusercontent.com/CheungZeeCn/iPapa/master/doc/task.status.png)
 
 1. new  
 1. down
