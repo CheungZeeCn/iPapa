@@ -10,8 +10,12 @@ import os
 import urlparse
 from iTask import Task
 import util
+import re
 
 class ContentPageHandler(object):
+    def __init__(self):
+        self.reXHX = re.compile(r"(%s)_+"%"_"*12)
+
     def parse(self, task):
         print "ContentPageHandler parse", task.url, task['key']
         newTasks = []
@@ -123,9 +127,31 @@ class ContentPageHandler(object):
             ret['date'] = date
             
             contentZoomMeDiv = contentDiv.find('div', 'zoomMe') 
+            #delete mp3 player part
+            mp3H5 = contentZoomMeDiv.find('h5', 'tagaudiotitle')
+            if mp3H5:
+                print mp3H5
+                div = mp3H5.find_next_sibling('div', 'mediaplayer audioplayer')   
+                div.decompose()
+                mp3H5.decompose()
+
+            #delete script
+            for ele in contentZoomMeDiv.find_all('script'):
+                ele.decompose()
+            
+            for ul in contentZoomMeDiv.find_all('ul'):
+                if ul.find('li', 'playlistlink') or \
+                    ul.find('li', 'listenlink'):
+                        ul.decompose()
+
             #print contentZoomMeDiv
             #delete until first p
-            for tag in contentZoomMeDiv.find_all():
+            if contentZoomMeDiv.find('div', 'wordclick'):
+                iterContent = contentZoomMeDiv.find('div', 'wordclick')
+            else:
+                iterContent = contentZoomMeDiv
+
+            for tag in iterContent.find_all():
                 if tag.name != None:
                     if tag.name != 'p' and tag.name != 'br':
                         tag.decompose()
@@ -133,14 +159,31 @@ class ContentPageHandler(object):
                         break
             
             keepDelete = False
-            for tag in contentZoomMeDiv.find_all():
+            for tag in iterContent.find_all():
                 if tag.name != None:
                     if keepDelete == False:
                         if tag.name == 'div':
                             tagClass = tag.get('class')
-                            if tag.find('p') and "______________" in tag.p.text:
+                            if tag.find('p') and self.reXHX.search(tag.p.text):
+                                oriTag = tag
+                                tag =  tag.p
+                                #check em
                                 keepDelete = True
                                 tag.decompose()
+                                if  tag.find('span') and self.reXHX.search(tag.span.text):
+                                    print tag
+                                    keepDelete = True
+                                    tag.span.decompose()
+
+                                elif tag.find('em') and self.reXHX.search(tag.em.text):
+                                    print tag
+                                    keepDelete = True
+                                    tag.em.decompose()
+
+                                elif self.reXHX.search(tag.text):
+                                    print tag
+                                    keepDelete = True
+                                    tag.decompose()
                             
                             elif tagClass:
                                 if 'infgraphicsAttach' in tagClass:
@@ -150,12 +193,30 @@ class ContentPageHandler(object):
                                     tag.decompose()
                         elif tag.name == 'iframe':
                             tag.decompose()
+
+                        elif tag.name == 'p':
+                            #check em
+                            if  tag.find('span') and self.reXHX.search(tag.span.text):
+                                print tag
+                                keepDelete = True
+                                tag.span.decompose()
+
+                            elif tag.find('em') and self.reXHX.search(tag.em.text):
+                                print tag
+                                keepDelete = True
+                                tag.em.decompose()
+
+                            elif self.reXHX.search(tag.text):
+                                print tag
+                                keepDelete = True
+                                tag.decompose()
+                                  
                     else:
                         tag.decompose()
 
             #print contentZoomMeDiv
             #filt photos in content
-            for tag in contentZoomMeDiv.find_all():
+            for tag in iterContent.find_all():
                 if tag.name == 'div' and tag.get('class'):
                     if 'embedded_content_object' in tag.get('class'):
                         embDiv = tag 
@@ -180,7 +241,7 @@ class ContentPageHandler(object):
 
 
 if __name__ == '__main__':
-    data = open('tmp').read()
+    data = open('tmp3').read()
     m = ContentPageHandler()
     ret, status =  m.parseContent(data)
     for k in ret:

@@ -52,8 +52,10 @@ def gen(tsDir):
         if os.path.basename(f[0]).startswith('_content_') and f[1] == []:
             key = os.path.basename(f[0])
             status, error = checkKeyDir(f)         
-            if status not in ("OK", "IGNORE"):
+            if status == "ERROR":
                 print "ERROR:", key, error   
+            elif status == "IGNORE":
+                pass
             else:
                 doneList.append(key)
     return doneList
