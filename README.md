@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0d8c39a79668344d589a00b503440eb53aaf2645
 ![image](../doc/logo.jpg)iPapa
 =====
 
@@ -134,3 +138,7 @@ take cares of the threads, counters, queues, and blablabla, plz see the code and
 2. Parse it from task['__data'] for "page" task / do checking moving jobs for the "media" type task.
 3. Set the task.status into "done" or "failed".
 4. Put it into the WorkManager.outPQueue.
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0d8c39a79668344d589a00b503440eb53aaf2645
