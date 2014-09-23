@@ -11,6 +11,7 @@ import urlparse
 from iTask import Task
 import util
 import re
+import logging
 
 class ContentPageHandler(object):
     def __init__(self):
@@ -167,23 +168,25 @@ class ContentPageHandler(object):
                             if tag.find('p') and self.reXHX.search(tag.p.text):
                                 oriTag = tag
                                 tag =  tag.p
-                                #check em
-                                keepDelete = True
-                                tag.decompose()
-                                if  tag.find('span') and self.reXHX.search(tag.span.text):
-                                    print tag
-                                    keepDelete = True
-                                    tag.span.decompose()
-
-                                elif tag.find('em') and self.reXHX.search(tag.em.text):
-                                    print tag
-                                    keepDelete = True
-                                    tag.em.decompose()
-
-                                elif self.reXHX.search(tag.text):
-                                    print tag
+                                if tag.find_next_sibling('h5', 'tagaudiotitle') or \
+                                        tag.find_next_sibling('div', ['mediaplayer', 'audioplayer']):
                                     keepDelete = True
                                     tag.decompose()
+
+                                #if  tag.find('span') and self.reXHX.search(tag.span.text):
+                                #    print tag
+                                #    #keepDelete = True
+                                #    #tag.span.decompose()
+
+                                #elif tag.find('em') and self.reXHX.search(tag.em.text):
+                                #    print tag
+                                #    #keepDelete = True
+                                #    #tag.em.decompose()
+
+                                #elif self.reXHX.search(tag.text):
+                                #    print tag
+                                #    #keepDelete = True
+                                #    #tag.decompose()
                             
                             elif tagClass:
                                 if 'infgraphicsAttach' in tagClass:
@@ -197,19 +200,31 @@ class ContentPageHandler(object):
                         elif tag.name == 'p':
                             #check em
                             if  tag.find('span') and self.reXHX.search(tag.span.text):
-                                print tag
-                                keepDelete = True
-                                tag.span.decompose()
+                                #print tag
+                                #keepDelete = True
+                                #tag.span.decompose()
+                                if tag.find_next_sibling('h5', 'tagaudiotitle') or \
+                                        tag.find_next_sibling('div', ['mediaplayer', 'audioplayer']):
+                                    keepDelete = True
+                                    tag.decompose()
 
                             elif tag.find('em') and self.reXHX.search(tag.em.text):
-                                print tag
-                                keepDelete = True
-                                tag.em.decompose()
+                                #print tag
+                                #keepDelete = True
+                                #tag.em.decompose()
+                                if tag.find_next_sibling('h5', 'tagaudiotitle') or \
+                                        tag.find_next_sibling('div', ['mediaplayer', 'audioplayer']):
+                                    keepDelete = True
+                                    tag.decompose()
 
                             elif self.reXHX.search(tag.text):
                                 print tag
-                                keepDelete = True
-                                tag.decompose()
+                                #keepDelete = True
+                                #tag.decompose()
+                                if tag.find_next_sibling('h5', 'tagaudiotitle') or \
+                                        tag.find_next_sibling('div', ['mediaplayer', 'audioplayer']):
+                                    keepDelete = True
+                                    tag.decompose()
                                   
                     else:
                         tag.decompose()
@@ -241,7 +256,9 @@ class ContentPageHandler(object):
 
 
 if __name__ == '__main__':
-    data = open('tmp3').read()
+    import sys
+    inputCase = sys.argv[1]
+    data = open(inputCase).read()
     m = ContentPageHandler()
     ret, status =  m.parseContent(data)
     for k in ret:
