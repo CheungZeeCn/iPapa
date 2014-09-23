@@ -11,9 +11,9 @@ Version 1.0 beta.
 #Features of version 1.0
 * freaking task-based， 基于任务
 * less network-panic 不需要拘泥于网络的细节，包括错误处理和重试
-* more handlers 需要关心handles，也就是你处理爬到的内容的逻辑实现
+* more handlers 需要关心handlers，也就是你处理爬到的内容的逻辑实现
 * simple http-controling(not implemented yet)-monitoring 基于http的监控和(控制)接口
-* mess logs 一坨日志
+* mess logs 不止一坨日志
 * abysmal bugs maybe 可能潜在的一堆bugs
 
 #Installation
