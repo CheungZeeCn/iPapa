@@ -1,0 +1,7 @@
+Caution
+
+About files named by "klist.*",
+    They are ignore lists. the handler ClassPageHandler will not add the url to yield a task.
+    SEE: __init__historyKeys in ClassPageHandler.py  
+
+
