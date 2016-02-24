@@ -6,8 +6,8 @@
 # conf mainly 
 
 # worker's num for the framework
-iWorkThreadNum = 3
-iParserThreadNum = 2
+iWorkThreadNum = 1
+iParserThreadNum = 1
 
 if __name__ == '__main__':
     print 'hello world'

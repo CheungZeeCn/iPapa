@@ -119,7 +119,9 @@ def getTopN(d, n):
 def dump2JsonFile(data, fname):
     mkdir(os.path.dirname(fname))
     with io.open(fname, 'w', encoding='utf-8') as f: 
-        f.write(unicode(json.dumps(data, ensure_ascii=False)))
+        jStr = json.dumps(data, ensure_ascii=False)
+        jStrUnicode = unicode(jStr)
+        f.write(jStrUnicode)
         return True
     return False
 
@@ -139,8 +141,11 @@ def loadJsonFile(fname):
 
 def printException():
     exc_type, exc_value, exc_traceback = sys.exc_info() 
-    traceback.print_exception(exc_type, exc_value, exc_traceback,
-                                  limit=2, file=sys.stderr)
+    #traceback.print_exception(exc_type, exc_value, exc_traceback,
+    #                              limit=2, file=sys.stderr)
+    for i in traceback.format_exception(exc_type, exc_value, exc_traceback,
+        limit=2,):
+        print i,
 
 def exprException():
     exc_type, exc_value, exc_traceback = sys.exc_info() 

@@ -106,7 +106,7 @@ class Parser(threading.Thread):
                     self.signTask(t)
                     self.m.addTask(t)
                     # add it in my manager's queue
-        if isOK:
+        if isOK and task.status !='failed':
             if task.status == 'done':
                 myLogger.info("OK in parsing, set task[%d] done" % (task.id))
             elif task.status == 'ignore':

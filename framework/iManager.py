@@ -257,7 +257,7 @@ class WorkManager(object):
             myLogger.error("task [%d] Failed [%s], dump it" % (task.id, task.exprMe()))
             task['__expr__'] = task.exprMe()
             fileName = os.path.join(iPapa.iTsOutputPath, "failedTask.%d.json" % task.id)
-            util.dump2JsonFile(task, fileName)
+            util.dump2JsonFile(task['__expr__'], fileName)
             # todo :if we want to support the repeat argument
             #  take care of the function flush
         pass

@@ -51,8 +51,8 @@ class ClassPageHandler(object):
             soup = BS(page)           
             titleDiv = soup.find(id='archive').h2  
             classTitle = titleDiv.text
-            ul = soup.find('ul', "bullet_orange")
-            divs = ul.find_all('div', 'archive_rowmm')
+            #ul = soup.find('ul', "bullet_orange")
+            divs = soup.find_all('div', 'archive_rowmm')
             for div in divs:
                 zipPic = div.img.get('src')
                 #has audio?
@@ -71,5 +71,9 @@ class ClassPageHandler(object):
 
 
 if __name__ == '__main__':
+    import sys
+    inputCase = sys.argv[1]
+    data = open(inputCase).read()
     m = ClassPageHandler()
+    ret, status =  m.parseContent(data)
 

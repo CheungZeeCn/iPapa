@@ -18,7 +18,6 @@ class ContentPageHandler(object):
         self.reXHX = re.compile(r"(%s)_+"%"_"*12)
 
     def parse(self, task):
-        print "ContentPageHandler parse", task.url, task['key']
         newTasks = []
         ret, status = self.parseContent(task['__data'])
         meta = {}
@@ -91,6 +90,7 @@ class ContentPageHandler(object):
 
         else:
             task.status = 'failed'
+
         if task.status == 'ignore': 
             return {}
         if newTasks != []:
@@ -113,14 +113,27 @@ class ContentPageHandler(object):
                 ret['contentPics'].append(picDiv.a.img.get('src'))
                 ret['contentPicCaptions'].append(picDiv.next_sibling.text)
 
+            linkFound = False
             li = soup.find('li', 'downloadlinkstatic') 
             if li != None:
                 src = li.a.get('href')
                 ret['contentMp3'] = src
-            else:
+                linkFound = True
+
+            if linkFound == False:
                 li = soup.find('li', 'listenlink')
-                url = li.a.get('href')
-                ret['contentMp3Page'] = url
+                if li != None:
+                    url = li.a.get('href')
+                    # be careful here !!! contentMp3Page is not the same with contentMp3
+                    ret['contentMp3Page'] = url
+                    linkFound = True
+
+            if linkFound == False:
+                li = soup.find('li', 'downloadlink')
+                if li != None:
+                    url = li.a.get('href')
+                    ret['contentMp3'] = url
+                    linkFound = True
                               
             contentDiv = articleDiv.find('div', 'articleContent') 
             dateDiv = contentDiv.find('div', 'dateblock')
@@ -131,7 +144,7 @@ class ContentPageHandler(object):
             #delete mp3 player part
             mp3H5 = contentZoomMeDiv.find('h5', 'tagaudiotitle')
             if mp3H5:
-                print mp3H5
+                #print mp3H5
                 div = mp3H5.find_next_sibling('div', 'mediaplayer audioplayer')   
                 div.decompose()
                 mp3H5.decompose()
@@ -218,7 +231,7 @@ class ContentPageHandler(object):
                                     tag.decompose()
 
                             elif self.reXHX.search(tag.text):
-                                print tag
+                                #print tag
                                 #keepDelete = True
                                 #tag.decompose()
                                 if tag.find_next_sibling('h5', 'tagaudiotitle') or \
@@ -261,7 +274,10 @@ if __name__ == '__main__':
     data = open(inputCase).read()
     m = ContentPageHandler()
     ret, status =  m.parseContent(data)
-    for k in ret:
-        print 'key', k
-        print ret[k]
+    if ret == None:
+        print "None"
+    else:
+        for k in ret:
+            print k, ret[k]
+        
 
