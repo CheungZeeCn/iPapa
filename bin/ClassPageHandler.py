@@ -10,6 +10,11 @@ import urlparse
 import os
 import util
 
+"""
+    updated by zhangzhi for the new version of VOA :) 
+                                @2016-07-19 
+"""
+
 class ClassPageHandler(object):
     def __init__(self):
         self.historyKeys = set([])
@@ -49,16 +54,14 @@ class ClassPageHandler(object):
         ret = {'zipPic':{}, 'contentPage':{}}
         try:
             soup = BS(page)           
-            titleDiv = soup.find(id='archive').h2  
-            classTitle = titleDiv.text
+            articleUl = soup.find(id='articleItems')
             #ul = soup.find('ul', "bullet_orange")
-            divs = soup.find_all('div', 'archive_rowmm')
+            divs = articleUl.find_all('div', 'media-block')
             for div in divs:
                 zipPic = div.img.get('src')
                 #has audio?
-                a = div.h4.a
-                if a.select('span.assignedIcon.asIcoAudio') != []:
-                    span = a.find('span', 'underlineLink')
+                a = div.find('a', 'img-wrapper')
+                if a and a['href'] != '':
                     url = a.get('href')
                     key = url.replace('/', '_')
                     ret['zipPic'][key] = zipPic
@@ -71,9 +74,7 @@ class ClassPageHandler(object):
 
 
 if __name__ == '__main__':
-    import sys
-    inputCase = sys.argv[1]
-    data = open(inputCase).read()
+    data = open("cases/class_page.html").read()
     m = ClassPageHandler()
-    ret, status =  m.parseContent(data)
+    print m.parseContent(data)
 

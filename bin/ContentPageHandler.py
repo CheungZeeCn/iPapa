@@ -3,8 +3,13 @@
 # by zhangzhi @2014-08-24 21:07:29 
 # Copyright 2014 NONE rights reserved.
 
+"""
+Modified by zhangzhi for new VOA page version 
+                    @2016-07-19
+"""
 
 from setup import iPapa
+from datetime import datetime
 from bs4 import BeautifulSoup as BS
 import os
 import urlparse
@@ -37,6 +42,7 @@ class ContentPageHandler(object):
             meta['contentPics'] = ret['contentPics']
             meta['contentPicCaptions'] = ret['contentPicCaptions']
             meta['embPics'] = ret['embPics']
+
             #create new tasks here
             if len(ret['contentPics']) and len(ret['contentPicCaptions']):
                 picUrl = ret['contentPics'][0]
@@ -101,46 +107,82 @@ class ContentPageHandler(object):
         ret = {'contentPics':[], 'contentPicCaptions':[], 'embPics':[]}
         try:
             soup = BS(page)           
-            articleDiv = soup.find('div', id='article') 
-            siteTitleH2 = articleDiv.find('h2', 'sitetitle')
-            ret['siteTitle'] = siteTitleH2.a.text
+            siteTitleDiv = soup.find('div', 'category')
+            ret['siteTitle'] = siteTitleDiv.a.text
 
-            titleH1 = articleDiv.find('h1')
+            titleH1 = soup.find('div', 'col-title').find('h1')
             ret['title'] = titleH1.text.strip()
 
-            picDiv = soup.find('div', 'watermark')
-            if picDiv and picDiv.parent['class'] == ['contentImage', 'floatNone']:
-                ret['contentPics'].append(picDiv.a.img.get('src'))
-                ret['contentPicCaptions'].append(picDiv.next_sibling.text)
+            pubTime = ''
+            try:
+                pubTimeTxt = soup.find('div', 'publishing-details').span.time['datetime']
+                #7/18/2016 9:05:13 PM
+                #datetime.strptime('Jun 1 2005  1:33PM', '%b %d %Y %I:%M%p')  
+                pubTime = datetime.strptime(pubTimeTxt, '%m/%d/%Y %I:%M:%S %p').strftime("%Y-%m-%d %H:%M:%S")  
+                ret['date'] = pubTime
+            except Exception, e:
+                pass
+            
+            # contentPic 
+            imgs = soup.select('.col-multimedia > .media-placeholder.image img')
+            if imgs != []:
+                ret['contentPics'].append(imgs[0].get('src'))    
+            paras = soup.select('.col-multimedia > .media-placeholder.image p.caption')
+            if paras != []:
+                ret['contentPicCaptions'] = paras[0].text   
+
+            #print ret
+            #return 0, {}     
 
             linkFound = False
-            li = soup.find('li', 'downloadlinkstatic') 
-            if li != None:
-                src = li.a.get('href')
-                ret['contentMp3'] = src
-                linkFound = True
 
             if linkFound == False:
-                li = soup.find('li', 'listenlink')
-                if li != None:
-                    url = li.a.get('href')
-                    # be careful here !!! contentMp3Page is not the same with contentMp3
-                    ret['contentMp3Page'] = url
+                divDownload = soup.find('div', 'media-download')    
+                links = divDownload.select('li.subitem > a')
+                reNum = re.compile(r'\d+')
+                if links != []:
+                    minA = links[0]
+                    minKbps = int(reNum.search(minA.text.strip()).group())
+                    for a in links:
+                        aKbps = int(reNum.search(a.text.strip()).group())
+                        if aKbps < minKbps:
+                            minA = a
+                            minKbps = aKbps
+                    ret['contentMp3'] = minA.get('href')
                     linkFound = True
 
-            if linkFound == False:
-                li = soup.find('li', 'downloadlink')
-                if li != None:
-                    url = li.a.get('href')
-                    ret['contentMp3'] = url
-                    linkFound = True
-                              
-            contentDiv = articleDiv.find('div', 'articleContent') 
-            dateDiv = contentDiv.find('div', 'dateblock')
-            date = dateDiv.text.strip()
-            ret['date'] = date
-            
-            contentZoomMeDiv = contentDiv.find('div', 'zoomMe') 
+            #if linkFound == False
+            #    li = soup.find('li', 'downloadlinkstatic') 
+            #    if li != None:
+            #        src = li.a.get('href')
+            #        ret['contentMp3'] = src
+            #        linkFound = True
+
+
+
+            #if linkFound == False:
+            #    li = soup.find('li', 'listenlink')
+            #    if li != None:
+            #        url = li.a.get('href')
+            #        # be careful here !!! contentMp3Page is not the same with contentMp3
+            #        ret['contentMp3Page'] = url
+            #        linkFound = True
+
+            #if linkFound == False:
+            #    li = soup.find('li', 'downloadlink')
+            #    if li != None:
+            #        url = li.a.get('href')
+            #        ret['contentMp3'] = url
+            #        linkFound = True
+
+            contentDiv = soup.find('div', 'wysiwyg') 
+
+            contentZoomMeDiv = contentDiv
+
+            mp3Div = contentZoomMeDiv.find('div', 'player-and-links')
+            if mp3Div:
+                mp3Div.decompose()    
+
             #delete mp3 player part
             mp3H5 = contentZoomMeDiv.find('h5', 'tagaudiotitle')
             if mp3H5:
@@ -258,9 +300,16 @@ class ContentPageHandler(object):
                             tag.replace_with(embImgDiv)
                         else:
                             tag.decompose()
+
+                if tag.name == 'img':
+                    embImg = tag
+                    src = embImg.get('src')
+                    ret['embPics'].append(src)
+                    newSrc = os.path.basename(urlparse.urlparse(src).path)
+                    embImg['src'] = newSrc
+                    tag.replace_with(embImg)
                 
             ret['content'] = "%s" % contentZoomMeDiv.prettify().encode('utf-8')
-            
         except Exception, e:
             util.printException()
             return (None, e)
@@ -269,15 +318,14 @@ class ContentPageHandler(object):
 
 
 if __name__ == '__main__':
-    import sys
-    inputCase = sys.argv[1]
-    data = open(inputCase).read()
+    data = open("cases/contentPage.html").read()
     m = ContentPageHandler()
     ret, status =  m.parseContent(data)
-    if ret == None:
-        print "None"
-    else:
-        for k in ret:
-            print k, ret[k]
-        
+    #if ret == None:
+    #    print "None"
+    #else:
+    #    for k in ret:
+    #        print k, ret[k]
+    #    
+    print ret['content']
 
