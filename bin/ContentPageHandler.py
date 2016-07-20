@@ -318,14 +318,13 @@ class ContentPageHandler(object):
 
 
 if __name__ == '__main__':
-    data = open("cases/contentPage.html").read()
+    data = open("cases/3423409.html").read()
     m = ContentPageHandler()
     ret, status =  m.parseContent(data)
-    #if ret == None:
-    #    print "None"
-    #else:
-    #    for k in ret:
-    #        print k, ret[k]
-    #    
-    print ret['content']
+    if ret == None:
+        print "None"
+    else:
+        for k in ret:
+            print k, ret[k]
+        
 
