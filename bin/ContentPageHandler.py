@@ -137,7 +137,9 @@ class ContentPageHandler(object):
             linkFound = False
 
             if linkFound == False:
-                divDownload = soup.find('div', 'media-download')    
+                contentDiv = soup.find('div', 'wysiwyg') 
+                divPlayer = contentDiv.find('div', 'player-and-links')  
+                divDownload = divPlayer.find('div', 'media-download') 
                 links = divDownload.select('li.subitem > a')
                 reNum = re.compile(r'\d+')
                 if links != []:
@@ -309,7 +311,11 @@ class ContentPageHandler(object):
                     embImg['src'] = newSrc
                     tag.replace_with(embImg)
                 
-            ret['content'] = "%s" % contentZoomMeDiv.prettify().encode('utf-8')
+            m = re.search("(.+)(?:<body[^<>]*>(.*)</body>)(.+)", str(contentZoomMeDiv), re.S)
+            if m == None:
+                ret['content'] = "<body>%s</body>" % contentZoomMeDiv.prettify().encode('utf-8')
+            else:     
+                ret['content'] = "%s" % contentZoomMeDiv.prettify().encode('utf-8')
         except Exception, e:
             util.printException()
             return (None, e)
@@ -318,7 +324,7 @@ class ContentPageHandler(object):
 
 
 if __name__ == '__main__':
-    data = open("cases/3423409.html").read()
+    data = open("cases/content_with_video.html").read()
     m = ContentPageHandler()
     ret, status =  m.parseContent(data)
     if ret == None:
